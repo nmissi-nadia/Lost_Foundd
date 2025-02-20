@@ -1,22 +1,23 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Categorie;
+use App\Models\Annonce;
 use Illuminate\Http\Request;
 
 class AnnonceController extends Controller
 {
-    public function create()
-{
-    $categories = Categorie::all();
-    return view('annonces.create', compact('categories'));
-}
+        public function create()
+    {
+        $categories = Categorie::all();
+        return view('Annonce.publierAnnounce', compact('categories'));
+    }
 
      // Liste des annonces
      public function index()
      {
          $annonces = Annonce::with('user', 'categorie')->latest()->get();
-         return view('annonces.index', compact('annonces'));
+         return view('dashboard', compact('annonces'));
      }
  
      // Afficher une annonce
@@ -28,22 +29,31 @@ class AnnonceController extends Controller
  
      // Créer une annonce
      public function store(Request $request)
+     
      {
-         $validatedData = $request->validate([
-             'titre' => 'required|string|max:255',
-             'description' => 'required|string',
-             'photo' => 'nullable|image',
-             'date_perdu_trouve' => 'required|date',
-             'lieu' => 'required|string',
-             'categorie_id' => 'required|exists:categories,id',
-         ]);
- 
-         // Enregistrer l'annonce
-         $annonce = new Annonce($validatedData);
+        dd($request);
+         // Création d'une nouvelle instance d'Annonce
+         $annonce = new Annonce();
+         $annonce->titre = $request->input('title');
+         $annonce->description = $request->input('description');
+         $annonce->date_perdu_trouve = $request->input('date');
+         $annonce->lieu = $request->input('location');
+         $annonce->categorie_id = $request->input('category');
          $annonce->user_id = auth()->id(); // Associer l'utilisateur connecté
+     
+         // Vérifier si une photo a été uploadée
+         if ($request->hasFile('photo')) {
+             $photoPath = $request->file('photo')->store('Annonce/photos', 'public'); // Stocker la photo
+             $annonce->photo = $photoPath; // Enregistrer le chemin de la photo
+         }
+     
+         // Sauvegarder l'annonce dans la base de données
          $annonce->save();
- 
-         return redirect()->route('annonces.index')->with('success', 'Annonce créée avec succès.');
+     
+         // Rediriger avec un message de succès
+         return redirect()->route('dashboard')->with('success', 'Annonce créée avec succès.');
      }
+     
+
 
 }

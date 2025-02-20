@@ -10,18 +10,8 @@
 <body class="bg-gray-100">
     <div x-data="{
         type: 'lost',
-        title: '',
-        description: '',
-        category: '',
-        date: '',
-        location: '',
         imagePreview: null,
-        contact: {
-            email: '',
-            phone: ''
-        },
-        errorMessages: {},
-        
+
         handleImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -30,58 +20,6 @@
                     this.imagePreview = e.target.result;
                 };
                 reader.readAsDataURL(file);
-            }
-        },
-        
-        validateForm() {
-            this.errorMessages = {};
-            let isValid = true;
-            
-            if (!this.title.trim()) {
-                this.errorMessages.title = 'Le titre est requis';
-                isValid = false;
-            }
-            
-            if (!this.description.trim()) {
-                this.errorMessages.description = 'La description est requise';
-                isValid = false;
-            }
-            
-            if (!this.category) {
-                this.errorMessages.category = 'La catégorie est requise';
-                isValid = false;
-            }
-            
-            if (!this.date) {
-                this.errorMessages.date = 'La date est requise';
-                isValid = false;
-            }
-            
-            if (!this.location.trim()) {
-                this.errorMessages.location = 'Le lieu est requis';
-                isValid = false;
-            }
-            
-            if (!this.contact.email.trim()) {
-                this.errorMessages.email = 'L\'email est requis';
-                isValid = false;
-            }
-            
-            return isValid;
-        },
-        
-        submitForm() {
-            if (this.validateForm()) {
-                // Ici, on simule l'envoi du formulaire
-                console.log('Formulaire soumis', {
-                    type: this.type,
-                    title: this.title,
-                    description: this.description,
-                    category: this.category,
-                    date: this.date,
-                    location: this.location,
-                    contact: this.contact
-                });
             }
         }
     }">
@@ -95,17 +33,20 @@
 
                 <!-- Formulaire -->
                 <div class="bg-white rounded-lg shadow-lg p-6">
-                    <form @submit.prevent="submitForm" class="space-y-6">
+                    <form method="POST" action="/annonce/publier" enctype="multipart/form-data" class="space-y-6">
+                        <!-- Token CSRF -->
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
                         <!-- Type d'annonce -->
                         <div class="space-y-2">
                             <label class="block text-sm font-medium text-gray-700">Type d'annonce</label>
                             <div class="flex gap-4">
                                 <label class="flex items-center">
-                                    <input type="radio" x-model="type" value="lost" class="form-radio text-blue-600">
+                                    <input type="radio" name="type" value="lost" class="form-radio text-blue-600" checked>
                                     <span class="ml-2">Objet perdu</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="radio" x-model="type" value="found" class="form-radio text-blue-600">
+                                    <input type="radio" name="type" value="found" class="form-radio text-blue-600">
                                     <span class="ml-2">Objet trouvé</span>
                                 </label>
                             </div>
@@ -116,32 +57,27 @@
                             <label class="block text-sm font-medium text-gray-700">Titre de l'annonce</label>
                             <input 
                                 type="text" 
-                                x-model="title"
+                                name="title"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                :class="{'border-red-500': errorMessages.title}"
                             >
-                            <p x-show="errorMessages.title" x-text="errorMessages.title" class="mt-1 text-sm text-red-600"></p>
                         </div>
 
                         <!-- Description -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Description détaillée</label>
                             <textarea 
-                                x-model="description"
+                                name="description"
                                 rows="4"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                :class="{'border-red-500': errorMessages.description}"
                             ></textarea>
-                            <p x-show="errorMessages.description" x-text="errorMessages.description" class="mt-1 text-sm text-red-600"></p>
                         </div>
 
                         <!-- Catégorie -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Catégorie</label>
                             <select 
-                                x-model="category"
+                                name="category"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                :class="{'border-red-500': errorMessages.category}"
                             >
                                 <option value="">Sélectionnez une catégorie</option>
                                 <option value="electronics">Électronique</option>
@@ -151,7 +87,6 @@
                                 <option value="accessories">Accessoires</option>
                                 <option value="other">Autre</option>
                             </select>
-                            <p x-show="errorMessages.category" x-text="errorMessages.category" class="mt-1 text-sm text-red-600"></p>
                         </div>
 
                         <!-- Date et Lieu -->
@@ -160,22 +95,17 @@
                                 <label class="block text-sm font-medium text-gray-700">Date</label>
                                 <input 
                                     type="date" 
-                                    x-model="date"
+                                    name="date"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    :class="{'border-red-500': errorMessages.date}"
                                 >
-                                <p x-show="errorMessages.date" x-text="errorMessages.date" class="mt-1 text-sm text-red-600"></p>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Lieu</label>
                                 <input 
                                     type="text" 
-                                    x-model="location"
+                                    name="location"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    :class="{'border-red-500': errorMessages.location}"
-                                    placeholder="Ex: Gare centrale, Parc municipal..."
                                 >
-                                <p x-show="errorMessages.location" x-text="errorMessages.location" class="mt-1 text-sm text-red-600"></p>
                             </div>
                         </div>
 
@@ -192,7 +122,7 @@
                                             <div class="flex text-sm text-gray-600">
                                                 <label class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                                                     <span>Télécharger une photo</span>
-                                                    <input type="file" class="sr-only" @change="handleImageUpload" accept="image/*">
+                                                    <input type="file" name="image" class="sr-only" @change="handleImageUpload" accept="image/*">
                                                 </label>
                                             </div>
                                             <p class="text-xs text-gray-500">PNG, JPG jusqu'à 5MB</p>
@@ -224,34 +154,26 @@
                                     <label class="block text-sm font-medium text-gray-700">Email</label>
                                     <input 
                                         type="email" 
-                                        x-model="contact.email"
+                                        name="email"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        :class="{'border-red-500': errorMessages.email}"
                                     >
-                                    <p x-show="errorMessages.email" x-text="errorMessages.email" class="mt-1 text-sm text-red-600"></p>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Téléphone (optionnel)</label>
+                                    <label class="block text-sm font-medium text-gray-700">Téléphone</label>
                                     <input 
                                         type="tel" 
-                                        x-model="contact.phone"
+                                        name="phone"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     >
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Boutons -->
-                        <div class="flex gap-4 justify-end pt-4">
-                            <button 
-                                type="button"
-                                class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            >
-                                Annuler
-                            </button>
+                        <!-- Bouton -->
+                        <div>
                             <button 
                                 type="submit"
-                                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
                             >
                                 Publier l'annonce
                             </button>

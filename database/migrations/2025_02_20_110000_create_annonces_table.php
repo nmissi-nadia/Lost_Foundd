@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->date('date_perdu_trouve');
             $table->string('lieu');
+            $table->enum('type', ['lost', 'trouve']); // Ajout de la colonne "type"
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();

@@ -2,14 +2,21 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AnnonceController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/annonce/create', [AnnonceController::class, 'create'])
+    ->middleware(['auth', 'verified'])
+    ->name('publieAnnonce');
+Route::post('/annonce/publier', [AnnonceController::class, 'store'])
+    ->middleware(['auth', 'verified']);
+
+Route::get('/api/annonces', [AnnonceController::class, 'index']);
+Route::get('/dashboard', [AnnonceController::class, 'index'] 
+)->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
