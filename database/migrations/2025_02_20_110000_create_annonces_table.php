@@ -16,13 +16,12 @@ return new class extends Migration
             $table->string('titre');
             $table->text('description');
             $table->string('photo')->nullable();
-            $table->date('date_perte_trouvaille');
+            $table->date('date_perdu_trouve');
             $table->string('lieu');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
-        
     }
 
     /**

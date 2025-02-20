@@ -45,4 +45,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    // Un utilisateur peut publier plusieurs annonces.
+    public function annonces()
+    {
+        return $this->hasMany(Annonce::class, 'user_id');
+    }
+
+    // Un utilisateur peut ajouter plusieurs commentaires.
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaire::class, 'user_id');
+    }
 }
