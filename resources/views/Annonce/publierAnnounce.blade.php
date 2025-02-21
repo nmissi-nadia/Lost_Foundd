@@ -35,7 +35,7 @@
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <form method="POST" action="/annonce/publier" enctype="multipart/form-data" class="space-y-6">
                         <!-- Token CSRF -->
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        @csrf
 
                         <!-- Type d'annonce -->
                         <div class="space-y-2">
@@ -75,17 +75,10 @@
                         <!-- Catégorie -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Catégorie</label>
-                            <select 
-                                name="category"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            >
-                                <option value="">Sélectionnez une catégorie</option>
-                                <option value="electronics">Électronique</option>
-                                <option value="clothing">Vêtements</option>
-                                <option value="documents">Documents</option>
-                                <option value="keys">Clés</option>
-                                <option value="accessories">Accessoires</option>
-                                <option value="other">Autre</option>
+                            <select name="categorie_id" id="categorie_id" class="form-control">
+                                @foreach ($categories as $categorie)
+                                    <option value="{{ $categorie->id }}">{{ $categorie->categorie }}</option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -110,64 +103,43 @@
                         </div>
 
                         <!-- Upload Image -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Photo de l'objet (optionnel)</label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div class="space-y-1 text-center">
-                                    <template x-if="!imagePreview">
-                                        <div>
-                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                            <div class="flex text-sm text-gray-600">
-                                                <label class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
-                                                    <span>Télécharger une photo</span>
-                                                    <input type="file" name="image" class="sr-only" @change="handleImageUpload" accept="image/*">
-                                                </label>
-                                            </div>
-                                            <p class="text-xs text-gray-500">PNG, JPG jusqu'à 5MB</p>
-                                        </div>
-                                    </template>
-                                    <template x-if="imagePreview">
-                                        <div class="relative">
-                                            <img :src="imagePreview" class="max-h-48 mx-auto">
-                                            <button 
-                                                @click="imagePreview = null" 
-                                                type="button"
-                                                class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                                            >
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <!-- Votre code d'upload ici -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Photo de l'objet (optionnel)</label>
+                                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                    <div class="space-y-1 text-center">
+                                        <template x-if="!imagePreview">
+                                            <div>
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
-                                            </button>
-                                        </div>
-                                    </template>
+                                                <div class="flex text-sm text-gray-600">
+                                                    <label class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                                        <span>Télécharger une photo</span>
+                                                        <input type="file" name="photo" class="sr-only" @change="handleImageUpload" accept="image/*">
+                                                    </label>
+                                                </div>
+                                                <p class="text-xs text-gray-500">PNG, JPG jusqu'à 5MB</p>
+                                            </div>
+                                        </template>
+                                        <template x-if="imagePreview">
+                                            <div class="relative">
+                                                <img :src="imagePreview" class="max-h-48 mx-auto">
+                                                <button 
+                                                    @click="imagePreview = null" 
+                                                    type="button"
+                                                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                                >
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Informations de contact -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-medium text-gray-900">Informations de contact</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                                    <input 
-                                        type="email" 
-                                        name="email"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    >
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Téléphone</label>
-                                    <input 
-                                        type="tel" 
-                                        name="phone"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    >
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Bouton -->
                         <div>

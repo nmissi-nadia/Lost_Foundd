@@ -8,66 +8,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/cdn.min.js"></script>
 </head>
 <body class="bg-gray-100">
-    <div x-data="{
-        announcement: {
-            id: 1,
-            type: 'lost',
-            title: 'iPhone 13 Pro perdu',
-            description: 'iPhone 13 Pro couleur graphite perdu vers la gare centrale. Il a une coque transparente et un écran légèrement fissuré en haut à droite. Il contient des photos importantes.',
-            category: 'electronics',
-            status: 'active',
-            date: '2024-02-15',
-            location: 'Gare Centrale, près des quais 3-4',
-            image: '/api/placeholder/800/600',
-            contact: {
-                name: 'Jean Dupont',
-                email: 'jean.dupont@email.com',
-                phone: '0123456789'
-            },
-            author: {
-                name: 'Jean Dupont',
-                avatar: '/api/placeholder/40/40',
-                date: '15 février 2024'
-            },
-            comments: [
-                {
-                    id: 1,
-                    author: 'Marie Martin',
-                    avatar: '/api/placeholder/40/40',
-                    content: 'J\'ai vu un iPhone similaire au café près de la gare hier soir. Je vais me renseigner.',
-                    date: 'Il y a 2 heures'
-                },
-                {
-                    id: 2,
-                    author: 'Pierre Durand',
-                    avatar: '/api/placeholder/40/40',
-                    content: 'As-tu essayé de le faire sonner avec Localiser mon iPhone ?',
-                    date: 'Il y a 1 heure'
-                }
-            ]
-        },
-        newComment: '',
-        showContactInfo: false,
-        submitComment() {
-            if (this.newComment.trim()) {
-                // Simulation d'ajout de commentaire
-                this.announcement.comments.push({
-                    id: this.announcement.comments.length + 1,
-                    author: 'Vous',
-                    avatar: '/api/placeholder/40/40',
-                    content: this.newComment,
-                    date: 'À l\'instant'
-                });
-                this.newComment = '';
-            }
-        }
-    }">
+ 
         <div class="min-h-screen py-8">
             <div class="container mx-auto px-4">
                 <!-- Fil d'Ariane -->
                 <nav class="mb-8">
                     <ol class="flex items-center space-x-2 text-gray-600">
-                        <li><a href="#" class="hover:text-blue-600">Accueil</a></li>
+                        <li><a href="dashboard" class="hover:text-blue-600">Accueil</a></li>
                         <li class="flex items-center space-x-2">
                             <span>/</span>
                             <a href="#" class="hover:text-blue-600">Annonces</a>

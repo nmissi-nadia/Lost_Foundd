@@ -23,5 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
+Route::delete('/annonce/{id}', [AnnonceController::class, 'destroy'])->name('annonce.destroy');
+Route::get('/annonce/{id}/edit', [AnnonceController::class, 'edit'])->name('annonce.edit');
+Route::put('/annonce/{id}', [AnnonceController::class, 'update'])->name('annonce.update');
 require __DIR__.'/auth.php';
