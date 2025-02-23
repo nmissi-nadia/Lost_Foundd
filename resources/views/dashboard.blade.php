@@ -39,7 +39,7 @@
                         <!-- Filtres -->
                         <div id="showFilters" x-transition class="mt-4 p-4 bg-gray-50 rounded-lg">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <<!-- Filtre par type -->
+                                <!-- Filtre par type -->
                                 <div>
                                     <select name="type" class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                         <option value="all" {{ request('type') == 'all' ? 'selected' : '' }}>Tous</option>

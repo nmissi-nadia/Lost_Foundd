@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Commentaire;
 use Illuminate\Http\Request;
 
 class CommentaireController extends Controller
@@ -9,16 +9,22 @@ class CommentaireController extends Controller
     // Ajouter un commentaire
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'contenu' => 'required|string',
+        // Validate the request
+        $request->validate([
+            'contenu' => 'required|string|max:1000',
             'annonce_id' => 'required|exists:annonces,id',
         ]);
 
-        // Enregistrer le commentaire
-        $commentaire = new Commentaire($validatedData);
-        $commentaire->user_id = auth()->id(); // Associer l'utilisateur connecté
+        // Create a new comment
+        $commentaire = new Commentaire();
+        $commentaire->contenu = $request->contenu;
+        $commentaire->annonce_id = $request->annonce_id;
+        $commentaire->user_id = auth()->id(); // Assuming user is authenticated
+
         $commentaire->save();
 
-        return redirect()->back()->with('success', 'Commentaire ajouté avec succès.');
+        // Redirect back to the announcement page with a success message
+        return redirect()->route('annonce.show', $request->annonce_id)->with('success', 'Commentaire ajouté avec succès!');
     }
+    // Afficher les commentaire
 }

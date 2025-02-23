@@ -55,7 +55,7 @@ class AnnonceController extends Controller
      public function show($id)
      {
          $annonce = Annonce::with('user', 'commentaires.user')->findOrFail($id);
-         return view('annonces.show', compact('annonce'));
+         return view('Annonce.detailsAnnounce', compact('annonce'));
      }
  
      // Créer une annonce
@@ -78,7 +78,6 @@ class AnnonceController extends Controller
             $photoPath = $request->file('photo')->store('Annonce', 'public'); 
             $annonce->photo = $photoPath; 
         }
-        
         
          $annonce->save();
          return redirect()->route('dashboard')->with('success', 'Annonce créée avec succès.');
@@ -121,11 +120,16 @@ class AnnonceController extends Controller
      
          return redirect()->route('dashboard')->with('success', 'Annonce mise à jour avec succès.');
      }
+
      public function edit($id)
      {
          $annonce = Annonce::findOrFail($id);
          $categories = Categorie::all(); // Pour le dropdown des catégories
-         return view('Annonce.edit', compact('annonce', 'categories'));
+         return view('Annonce.edit', compact('annonce'));
+     }
+
+     public function read($id){
+        
      }
 
 }
