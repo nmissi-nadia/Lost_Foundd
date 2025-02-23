@@ -93,33 +93,39 @@ class AnnonceController extends Controller
          return redirect()->route('dashboard')->with('success', 'Annonce supprimée avec succès.');
      }
      public function update(Request $request, $id)
-     {
-         $request->validate([
-             'title' => 'required|string|max:255',
-             'description' => 'required|string',
-             'date' => 'required|date',
-             'location' => 'required|string|max:255',
-             'categorie_id' => 'required|exists:categories,id',
-             'photo' => 'nullable|image|max:2048',
-         ]);
-     
-         $annonce = Annonce::findOrFail($id);
-         $annonce->titre = $request->input('title');
-         $annonce->description = $request->input('description');
-         $annonce->date_perdu_trouve = $request->input('date');
-         $annonce->lieu = $request->input('location');
-         $annonce->categorie_id = $request->input('categorie_id');
-     
-         // Vérifier si une nouvelle photo a été uploadée
-         if ($request->hasFile('photo')) {
-             $photoPath = $request->file('photo')->store('Annonce/photos', 'public');
-             $annonce->photo = $photoPath;
-         }
-     
-         $annonce->save();
-     
-         return redirect()->route('dashboard')->with('success', 'Annonce mise à jour avec succès.');
-     }
+        {
+           
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'location' => 'required|string|max:255',
+                'type' => 'required|in:lost,found', // Assuming you have a type field
+                'image' => 'nullable|image|max:2048', // Optional image field
+            ]);
+
+            $annonce = Annonce::findOrFail($id);
+
+            // Update the announcement details
+            $annonce->titre = $validatedData['title'];
+            $annonce->description = $validatedData['description'];
+            $annonce->lieu = $validatedData['location'];
+            $annonce->type = $validatedData['type'];
+
+            // Handle image upload if present
+            if ($request->hasFile('image')) {
+                // Delete old image if necessary
+                if ($annonce->photo) {
+                    Storage::delete($annonce->photo);
+                }
+                $path = $request->file('image')->store('images', 'public');
+                $annonce->photo = $path; // Save the path to the new image
+            }
+
+            $annonce->save(); // Save the updated announcement
+
+            // Redirect back to the announcement page with a success message
+            return redirect()->route('annonce.show', $annonce->id)->with('success', 'Annonce mise à jour avec succès!');
+        }
 
      public function edit($id)
      {
